@@ -7,10 +7,6 @@ from .models import Post, Author
 
 class PostForm(forms.ModelForm):
 
-    title = forms.CharField(min_length=5)
-    authors = Author.objects.all()
-    author_list = [(i.authorUser.username,i.authorUser.username) for i in authors]
-    author = forms.ChoiceField(choices=author_list)
 
 
     class Meta:
@@ -19,8 +15,9 @@ class PostForm(forms.ModelForm):
             'author',
             'title',
             'text',
-            'categoryType'
         ]
+
+
 
     def clean(self):
         cleaned_data = super().clean()

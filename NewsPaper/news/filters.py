@@ -7,9 +7,9 @@ from .models import Post
 class PostFilter(FilterSet):
     added_after = DateTimeFilter(
         field_name='dateCreation',
-        lookup_expr='gt',
+        lookup_expr='gte',
         widget=DateTimeInput(
-            format='%Y-%m-%dT%H:%M',
+            format='%Y-%m-%dT',
             attrs={'type': 'datetime-local'},
         ))
 
