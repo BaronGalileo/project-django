@@ -59,3 +59,5 @@
 #
 # comm.values('rating')
 # comm.values('text')
+ProductMaterial.objects.create(product=Product.objects.get(pk=2), material=Material.objects.get(pk=3))
+Post.objects.get(pk=1).categoryType

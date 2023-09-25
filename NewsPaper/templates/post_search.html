@@ -13,7 +13,11 @@ Posts
    то выведется указанный в фильтре текст -->
    <h3> {{ fresh_news|default_if_none:"Обновляйте наше приложение, чтобы не пропустить свежие новости!" }} </h3>
 
+<form action="" method="get">
+       {{ filterset.form.as_p }}
 
+       <input type="submit" value="Найти" />
+</form>
 
    <hr>
    {% if posts %}
