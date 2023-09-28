@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -19,12 +20,11 @@ class PostList(ListView):
     context_object_name = 'posts'
     paginate_by = 10
 
-    # def get_queryset(self):
-    #
-    #     queryset = super().get_queryset()
-    #     self.filterset =PostFilter(self.request.GET, queryset)
-    #     return self.filterset.qs
+    def get_queryset(self):
 
+        queryset = super().get_queryset()
+        self.filterset =PostFilter(self.request.GET, queryset)
+        return self.filterset.qs
 
 
 
@@ -33,7 +33,7 @@ class PostList(ListView):
         context['time_now'] = datetime.utcnow()
         context['fresh_news'] = "Сегодня в 16.00 репортаж с места проишествия!"
         # context["news_list"] = Post.objects.all().order_by('-dateCreation')
-        context['filterset'] = self.filterset
+        # context['filterset'] = self.filterset
         return context
 
 class MyViev(ListView):
@@ -75,7 +75,10 @@ class PostDetail(DetailView):
 
         return context
 
-class PostCreate(CreateView):
+class PostCreate(PermissionRequiredMixin,LoginRequiredMixin, CreateView):
+
+    permission_required = ('news.add_post',)
+    raise_exception = True
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -86,7 +89,8 @@ class PostCreate(CreateView):
         return super().form_valid(form)
 
 
-class ArticlesCreate(CreateView):
+class ArticlesCreate(PermissionRequiredMixin,CreateView):
+    permission_required = ('news.add_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -104,7 +108,8 @@ class ArticlesCreate(CreateView):
 
 
 #
-class PostUpdate(UpdateView):
+class PostUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -112,7 +117,10 @@ class PostUpdate(UpdateView):
     def get_queryset(self):
         return Post.objects.filter(categoryType='NW')
 
-class ArticlesUpdate(UpdateView):
+
+
+class ArticlesUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -122,7 +130,8 @@ class ArticlesUpdate(UpdateView):
 
 
 
-class PostDelete(DeleteView):
+class PostDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post',)
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
@@ -132,7 +141,8 @@ class PostDelete(DeleteView):
         return Post.objects.filter(categoryType='NW')
 
 
-class ArticlesDelete(DeleteView):
+class ArticlesDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post',)
     model = Post
     template_name = 'articles_delete.html'
     success_url = reverse_lazy('post_list')

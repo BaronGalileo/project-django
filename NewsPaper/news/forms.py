@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.views.generic import CreateView
 
-from .models import Post, Author
+from .models import *
 
 
 class PostForm(forms.ModelForm):
