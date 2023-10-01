@@ -54,12 +54,25 @@ class Command(BaseCommand):
 
         scheduler.add_job(
             my_job,
-            trigger=CronTrigger(),
+            trigger=CronTrigger(
+                day_of_week="fri", hour="18", minute="00"
+            ),
             id="my_job",
             max_instances=1,
             replace_existing=True,
         )
         logger.info("Added job 'my_job'.")
+
+        scheduler.add_job(
+            delete_old_job_executions,
+            trigger=CronTrigger(
+                day_of_week="fri", hour="18", minute="00"
+            ),
+            id="delete_old_job_executions",
+            max_instances=1,
+            replace_existing=True,
+        )
+        logger.info("Added weekly job: 'delete_old_job_executions'.")
 
 
 
