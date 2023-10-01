@@ -1,3 +1,4 @@
+
 from django.urls import path
 
 
@@ -15,4 +16,6 @@ urlpatterns = [
    path('articles/<int:pk>/edit/', ArticlesUpdate.as_view(), name='ar_update'),
    path('news/<int:pk>/delete/', PostDelete.as_view(), name='post_delete'),
    path('articles/<int:pk>/delete/', ArticlesDelete.as_view(), name='ar_delete'),
+   path('subscriptions/', subscriptions, name='subscriptions'),
+
 ]

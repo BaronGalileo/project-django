@@ -7,7 +7,11 @@ Posts
 {% endblock title %}
 
 {% block content %}
-   <h1>Всего публикаций : {{post|length}}</h1>
+    {% if is_not_subscrider %}
+        <p class="text-center"><a href="={% url'subscribe' category.id %}" class="=btn btn-secondry btn-sm">Подписаться</a> </p>
+    {% endif %}
+
+   <h1>Всего публикаций : {{category_list|length}}</h1>
    <h3>Сегодня : {{ time_now|date:'M d Y' }} </h3>
    <!-- Если в переменной next_sale будет None,
    то выведется указанный в фильтре текст -->
@@ -26,26 +30,33 @@ Posts
         <a href="{% url 'ar_create' %}">Добавить cтатью</a>
       {% endif %}
 
-       {% if posts %}
+       {% if category_list %}
        <table>
            <tr>
                <td>Название</td>
                <td>Дата публикации статьи</td>
                <td>Описание</td>
                <td>Рейтинг</td>
-               <td>Категории</td>
+               <td>Категория</td>
 
                {# Условие получается составным. #}
                 {% if perms.news.change_post or perms.news.delete_post %}
+                <td>Действия</td>
                 {% endif %}
            </tr>
 
-           {% for p in posts %}
+           {% for p in category_list %}
            <tr>
                <td>{{ p }}</td>
                <td>{{ p.dateCreation }}</td>
                <td>{{ p.text|truncatewords:20 }}</td>
                <td>{{ p.rating }}</td>
+               <td>{% for category in post.category.all %}
+                   <a href="{% url 'categorys' category.id %}">{{ category }}</a>
+                   {% endfor%}
+
+               </td>
+
                <td> {% if perms.news.change_post %}
                         {% if p.categoryType ==  "NW" %}
                             <a href="{% url 'post_update' pk=p.id  %}" >Изменить</a>
@@ -55,7 +66,6 @@ Posts
 
 
                {% endif %}
-
                {% if perms.news.delete_post %}
                    {% if p.categoryType ==  "NW" %}
                         <a href="{% url 'post_delete' pk=p.id  %}" >Удалить</a>
@@ -65,7 +75,6 @@ Posts
                {% endif %}
 
                </td>
-
 
 
            </tr>
