@@ -17,6 +17,7 @@ from .models import *
 
 
 
+
 class PostList(ListView):
     model = Post
     template_name = 'posts.html'
@@ -92,7 +93,7 @@ class PostCreate(PermissionRequiredMixin,LoginRequiredMixin,CreateView):
         return super().form_valid(form)
 
 
-class ArticlesCreate(PermissionRequiredMixin,CreateView):
+class ArticlesCreate(CreateView):
     permission_required = ('news.add_post',)
     form_class = PostForm
     model = Post
