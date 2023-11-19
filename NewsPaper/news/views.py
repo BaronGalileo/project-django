@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -9,6 +10,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.decorators.cache import cache_page # импортируем декоратор для кэширования отдельного представления
 
 from .filters import PostFilter
 from .forms import PostForm
@@ -17,12 +19,22 @@ from .models import *
 
 
 
+logger = logging.getLogger('django.security')
+
+def login_view(request):
+    logger.error('hello, Error!')
+
+    return HttpResponse('<h1>Test!</h1>')
 
 class PostList(ListView):
     model = Post
     template_name = 'posts.html'
     context_object_name = 'posts'
+    ordering = ['-dateCreation']
     paginate_by = 10
+
+
+
 
     def get_queryset(self):
 

@@ -1,3 +1,4 @@
+from linecache import cache
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -52,14 +53,25 @@ class Post(models.Model):
     text = models.TextField()
     rating = models.SmallIntegerField(default=0)
 
+    # допишем свойство, которое будет отображать есть ли cтатья на сайте
+    @property
+    def on_stock(self):
+        return self.text > ''
+
     def __str__(self):
-        return self.title
+        return f'{self.title}'
+
 
     def get_absolute_url(self):
         return reverse('post_detail', args=[str(self.id)])
 
-    class Meta:
-        ordering = ["-dateCreation", 'title']
+    # def save(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился
+    #     cache.delete(reverse('post_detail', args=[str(self.id)]))  # затем удаляем его из кэша, чтобы сбросить его
+
+    # class Meta:
+    """Класс для списка Постов "от свежих к старым"."""
+    #     ordering = ["-dateCreation", 'title']
 
 
 
