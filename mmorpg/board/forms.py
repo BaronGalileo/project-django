@@ -1,9 +1,8 @@
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django_ckeditor_5.widgets import *
+from django.forms import TextInput
 
-from .models import Post
-from django.forms import ModelForm, TextInput, SelectMultiple
+from .models import Post, Comment
+
 
 
 class PostForm(forms.ModelForm):
@@ -23,16 +22,20 @@ class PostForm(forms.ModelForm):
         fields = ['title',  'category', 'categoryType', 'content']
 
 
-class RegisterUserForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ('username', 'password1', 'password2')
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-input'}),
-            'password1': forms.PasswordInput(attrs={'class': 'form-input'}),
-            'password2': forms.PasswordInput(attrs={'class': 'form-input'})
-        }
 
+
+class CommentForm(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = ('text',)
+
+        widgets = {
+            'text': TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Комментарий'
+            })
+        }
 
 
 

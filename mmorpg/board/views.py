@@ -7,9 +7,9 @@ from django.views.generic import ListView, CreateView, DetailView
 from datetime import datetime
 
 from .filters import PostFilter
-from .forms import PostForm, RegisterUserForm
+from .forms import PostForm, CommentForm
 from .models import Post, Category
-from .utils import DataMixin
+
 
 
 def index(request):
@@ -49,6 +49,28 @@ def create(request):
     }
     return render(request, 'board/create.html', data)
 
+
+@login_required
+def CommentCreate(request, pk):
+    error = ''
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.author = request.user
+            form.save()
+
+            return redirect('board/post/pk')
+        else:
+            error = 'Форма была неверной'
+
+    form = PostForm()
+
+    data = {
+        'form': form,
+        'error': error
+    }
+    return render(request, 'board/post/pk.html', data)
 
 
 class PostList(ListView):

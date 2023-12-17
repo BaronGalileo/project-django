@@ -21,6 +21,16 @@ Posts
            </tr>
 
        </table>
+    <h1>Комментарий</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form.media }}
+            {{ form.as_p }}
+
+
+          <button class="btn btn-success" type="submit" value="Save">Добавить комментарий</button>
+        </form>
    {% else %}
        <h2> "Статья удалена!" </h2>
    {% endif %}

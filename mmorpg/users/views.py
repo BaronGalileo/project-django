@@ -5,7 +5,7 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
-from .forms import LoginUserForm, RegisterUserForm, ProfileUserForm
+from .forms import LoginUserForm, ProfileUserForm, RegisterUserForm
 
 
 class LoginUser(LoginView):
