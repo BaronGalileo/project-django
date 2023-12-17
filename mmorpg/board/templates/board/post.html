@@ -1,0 +1,29 @@
+{% extends 'board/default.html' %}
+
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+<div class="features">
+   <h1>Вы читаете :  {{post.title}}</h1>
+   <h4>Сегодня : {{ time_now|date:'d M Y' }}</h4>
+
+   <h4>Дата публикации статьи :{{ post.date_app|date:'d M Y'}} </h4>
+
+
+   <hr>
+   {% if post %}
+       <table>
+           <tr>
+               <td><p>{{post.content|safe}}</p></td>
+
+           </tr>
+
+       </table>
+   {% else %}
+       <h2> "Статья удалена!" </h2>
+   {% endif %}
+
+</div>
+{% endblock content %}

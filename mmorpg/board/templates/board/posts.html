@@ -1,0 +1,39 @@
+{% extends 'board/default.html' %}
+
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+<div class="features">
+   <h1> Всего публикаций  : {{posts|length}}</h1>
+   <h3> Сегодня : {{ time_now|date:'M d Y H:i:s' }} </h3>
+   <h3> {{ fresh_news|default:" на стрим!" }} </h3>
+
+
+   <hr>
+   {% if posts %}
+       <table>
+           <tr>
+               <td> <h3>Название</h3> </td>
+               <td> <h3>Дата публикации статьи</h3> </td>
+               <td> <h3>Описание</h3> </td>
+               <td> <h3>Рейтинг</h3> </td>
+           </tr>
+
+           {% for p in posts %}
+           <tr>
+               <td><p><a href="{% url 'post' p.pk %}"><li>{{ p }}</li></a></p></td>
+               <td><p>{{ p.date_app }}</p></td>
+               <td><a>{{ p.content|safe|truncatewords:10 }}</a></td>
+               <td><p>{{ p.rating}}</p></td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2> "Статей нет!" </h2>
+   {% endif %}
+
+</div>
+{% endblock content %}
