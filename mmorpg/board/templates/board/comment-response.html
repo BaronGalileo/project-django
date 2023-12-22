@@ -1,0 +1,22 @@
+{% extends 'board/default.html' %}
+
+{% block title %}Ответ{% endblock %}
+
+{% block content %}
+<div class="features">
+    <h1>Ответ на предложение</h1>
+
+        {{comment.commentUser}}<br>
+        {{comment.dateCreation}}<br>
+        {{comment.text}}<br>
+
+    <form action="" id="add_form" method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+
+        <button class="btn btn-success" form="add_form" type="submit" value="Save">Добавить комментарий</button>
+    </form>
+</div>
+{% endblock %}

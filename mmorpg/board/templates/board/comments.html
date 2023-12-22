@@ -1,0 +1,55 @@
+{% extends 'board/default.html' %}
+
+{% block title %}
+Comments
+{% endblock title %}
+
+{% block content %}
+<div class="features">
+    <h1> Всего публикаций : {{comments|length}}</h1>
+    <h3> Сегодня : {{ time_now|date:'M d Y H:i:s' }} </h3>
+    <h3> {{ fresh_news|default:" на стрим!" }} </h3>
+
+
+    <hr>
+    {% if comments %}
+    <table>
+
+
+        {% for p in comments %}
+
+
+        <td>
+         {% if p.commentPost is not None %}
+            <p><a href="{{ p.commentPost.get_absolute_url }}"><li>{{ p }}</li></a></p>
+
+         {% else %}
+             <td><p>{{ p }}</p></td>
+         {% endif %}
+         {% if p.parent is not None%}
+
+
+
+            <td><a href="{% url 'comment' p.pk %}"></a><p>{{ p.text }}</p></td>
+
+        {% else %}
+             <td><p>{{ p.text }}</p></td>
+        {% endif %}
+             <td><p>{{ p.parent}}</p></td>
+
+        {% if request.user == p.parent %}
+            <td><p><a href="{% url 'post' p.pk %}"><li>{{ p }}</li></a></p></td>
+            <td><p>{{ p.text}}</p></td>
+            <td><p>{{ p.parent}}</p></td>
+
+        {% endif %}
+        </tr>
+        {% endfor %}
+
+    </table>
+    {% else %}
+    <h2> "Комментариев нет!" </h2>
+    {% endif %}
+
+</div>
+{% endblock content %}

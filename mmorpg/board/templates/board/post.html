@@ -6,34 +6,57 @@ Posts
 
 {% block content %}
 <div class="features">
-   <h1>Вы читаете :  {{post.title}}</h1>
-   <h4>Сегодня : {{ time_now|date:'d M Y' }}</h4>
+    <h1>Вы читаете : {{post.title}}</h1>
+    <h4>Сегодня : {{ time_now|date:'d M Y' }}</h4>
+    <h4>Дата публикации статьи :{{ post.date_app|date:'d M Y'}} </h4>
+    <hr>
+    {% if post %}
+    <table>
+        <tr>
+            <td><p>{{post.content|safe}}</p></td>
+        </tr>
+    </table>
+    {% if request.user == post.author %}
+    <a href="{% url 'post-delete' post.id %}" class="btn btn-danger">Удалить</a>
+    <a href="{% url 'post-update' post.id %}" class="btn btn-info">Редактировать</a>
+    {% endif %}
+    <h3>Комментарии</h3>
 
-   <h4>Дата публикации статьи :{{ post.date_app|date:'d M Y'}} </h4>
+    {% for i in post.commets.all %}
+    {% if i.parent == None %}
+    {{i.commentUser}}<br>
+    {{i.dateCreation}}<br>
+    {{i.text}}<br>
+    {{i.parent}}<br>
+    {% else %}
+            {{i.commentUser}}
+            {{i.comcom.dateCreation}}
+            {{i.comcom.text}}
+    {% endif %}
+    {% if request.user == post.author %}
+    <a href="{% url 'comment-delete' i.id %}" class="btn btn-danger">Удалить</a>
+    <a href="{% url 'comment-response' i.id %}" class="btn btn-info">Ответить</a>
+
+    {% endif %}
+    {% endfor %}
 
 
-   <hr>
-   {% if post %}
-       <table>
-           <tr>
-               <td><p>{{post.content|safe}}</p></td>
+    <form action="" id="add_form" method="post">
+        {% csrf_token %}
 
-           </tr>
+        {{ form.as_p }}
 
-       </table>
-    <h1>Комментарий</h1>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+    {% if request.user.is_authenticated %}
+        <button class="btn btn-success" form="add_form" type="submit" value="Save">Добавить комментарий</button>
 
-            {{ form.media }}
-            {{ form.as_p }}
+    </form>
+    {% else %}
+    <h2>Чтобы оставить комментарий авторизуйтесь</h2>
+    {% endif %}
 
-
-          <button class="btn btn-success" type="submit" value="Save">Добавить комментарий</button>
-        </form>
-   {% else %}
-       <h2> "Статья удалена!" </h2>
-   {% endif %}
+    {% else %}
+    <h2> "Статья удалена!" </h2>
+    {% endif %}
 
 </div>
 {% endblock content %}

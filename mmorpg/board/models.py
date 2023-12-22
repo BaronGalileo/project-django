@@ -1,10 +1,14 @@
+
+
 from django.contrib.auth.models import User
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
 
 
+
+
 class Post(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE,)
 
     EVERYONE = "EN"
     TANKS = "TT"
@@ -38,7 +42,6 @@ class Post(models.Model):
     category = models.ManyToManyField("Category")
     rating = models.SmallIntegerField(default=0)
 
-
     def like(self):
         self.rating += 1
         self.save()
@@ -50,17 +53,33 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return f'/post/{self.id}'
+
     class Meta:
         ordering = ['-date_app']
 
 
-
 class Comment(models.Model):
-    commentPost = models.ForeignKey(Post, on_delete=models.CASCADE)
-    commentUser = models.ForeignKey(User, on_delete=models.CASCADE)
+    commentPost = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='Комментарий', blank=True, null=True,
+                                    related_name='commets')
+    commentUser = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Комментатор" )
+
     text = models.TextField(verbose_name='Текст')
     dateCreation = models.DateTimeField(auto_now_add=True)
     rating = models.SmallIntegerField(default=0)
+    parent = models.ForeignKey(
+        'self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True, related_name='comcom')
+
+    def __str__(self):
+        return self.text
+
+
+    class Meta:
+        ordering = ['-dateCreation']
+
+
+
 
     def like(self):
         self.rating += 1
@@ -72,8 +91,7 @@ class Comment(models.Model):
 
 
 class Category(models.Model):
-    name =models.CharField(max_length=64, unique=True, verbose_name='Название категории')
-
+    name = models.CharField(max_length=64, unique=True, verbose_name='Название категории')
 
     def __str__(self):
         return self.name.title()
@@ -93,7 +111,3 @@ class Subscriber(models.Model):
         on_delete=models.CASCADE,
         related_name='subscriptions',
     )
-
-
-
-

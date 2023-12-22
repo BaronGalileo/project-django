@@ -3,3 +3,89 @@
 {% block title %}Категории{% endblock %}
 
 {% block content %}Категории!{% endblock %}
+
+<!--    {% for i in post.commets.all %}-->
+<!--    {{i.commentUser}}<br>-->
+<!--    {{i.dateCreation}}<br>-->
+<!--    {{i.text}}<br>-->
+<!--    &lt;!&ndash;    {% if request.user == post.author %}&ndash;&gt;-->
+<!--    <form action=<!--    {% for i in post.commets.all %}-->
+<!--    {{i.commentUser}}<br>-->
+<!--    {{i.dateCreation}}<br>-->
+<!--    {{i.text}}<br>-->
+<!--    &lt;!&ndash;    {% if request.user == post.author %}&ndash;&gt;-->
+<!--    <form action="{% url 'post' i.id %}" method="post" id="formComment">-->
+<!--          {% csrf_token %}-->
+<!--        <input type="hidden" name="parent" id="contactparent" value="">-->
+
+<!--        <a href="{% url 'comment-delete' i.id %}" class="btn btn-danger">Удалить</a>-->
+<!--        &lt;!&ndash;    <a href="{% url 'comment-response' i.id %}" class="btn btn-info">Ответить</a>&ndash;&gt;-->
+<!--        <a href="#formComment" onclick="CommentForm('{{ i.commentUser }}','{{ i.id }}')">Ответить</a>-->
+<!--        {% endif %}-->
+
+<!--        {% endfor %}-->
+
+<!--        {% if request.user.is_authenticated %}-->
+
+
+<!--        &lt;!&ndash;        {{ form.as_p }}&ndash;&gt;-->
+
+
+<!--        <button class="btn btn-success" form="add_form" type="submit" value="Save">Добавить комментарий</button>-->
+<!--    </form>-->
+
+<!--    {% else %}-->
+<!--    <h2>Чтобы оставить комментарий авторизуйтесь</h2>-->
+<!--    {% endif %}-->
+
+<!--    {% else %}-->
+<!--    <h2> "Статья удалена!" </h2>-->
+<!--    {% endif %}-->
+
+<!--</div>-->
+<!--<script>-->
+<!--    function PostDetail(commentUser, id) {-->
+<!--        document.getElementById("contactparent").value = id;-->
+<!--        document.getElementById("contactparent").innerText = '${commentUser},'-->
+
+<!--    }-->
+
+<!--</script>-->
+<!--{% endblock content %}-->>-->
+<!--          {% csrf_token %}-->
+<!--        <input type="hidden" name="parent" id="contactparent" value="">-->
+
+<!--        <a href="{% url 'comment-delete' i.id %}" class="btn btn-danger">Удалить</a>-->
+<!--        &lt;!&ndash;    <a href="{% url 'comment-response' i.id %}" class="btn btn-info">Ответить</a>&ndash;&gt;-->
+<!--        <a href="#formComment" onclick="PostDetail('{{ i.commentUser }}','{{ i.id }}')">Ответить</a>-->
+<!--        {% endif %}-->
+
+<!--        {% endfor %}-->
+
+<!--        {% if request.user.is_authenticated %}-->
+
+
+<!--        &lt;!&ndash;        {{ form.as_p }}&ndash;&gt;-->
+
+
+<!--        <button class="btn btn-success" form="add_form" type="submit" value="Save">Добавить комментарий</button>-->
+<!--    </form>-->
+
+<!--    {% else %}-->
+<!--    <h2>Чтобы оставить комментарий авторизуйтесь</h2>-->
+<!--    {% endif %}-->
+
+<!--    {% else %}-->
+<!--    <h2> "Статья удалена!" </h2>-->
+<!--    {% endif %}-->
+
+<!--</div>-->
+<!--<script>-->
+<!--    function PostDetail(commentUser, id) {-->
+<!--        document.getElementById("contactparent").value = id;-->
+<!--        document.getElementById("contactparent").innerText = '${commentUser},'-->
+
+<!--    }-->
+
+<!--</script>-->
+<!--{% endblock content %}-->

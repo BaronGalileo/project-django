@@ -1,9 +1,8 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
 from django import forms
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-from .models import Category, Post
+from .models import Category, Post, Comment
 
 
 class PostForm(forms.ModelForm):
@@ -28,3 +27,4 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(Category)
 admin.site.register(Post,PostAdmin)
+admin.site.register(Comment)
