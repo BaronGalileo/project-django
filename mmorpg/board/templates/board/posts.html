@@ -1,12 +1,12 @@
 {% extends 'board/default.html' %}
-
+{% load static %}
 {% block title %}
 Posts
 {% endblock title %}
 
 {% block content %}
 <div class="features">
-   <h1> Всего публикаций  : {{posts|length}}</h1>
+    <img src="{% static 'board/img/Aion.jpeg' %}"  alt="Диалог">
    <h3> Сегодня : {{ time_now|date:'M d Y H:i:s' }} </h3>
    <h3> {{ fresh_news|default:" на стрим!" }} </h3>
 

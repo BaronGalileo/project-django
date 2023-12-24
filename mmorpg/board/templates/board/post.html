@@ -21,18 +21,12 @@ Posts
     <a href="{% url 'post-update' post.id %}" class="btn btn-info">Редактировать</a>
     {% endif %}
     <h3>Комментарии</h3>
-
+    <tr>
     {% for i in post.commets.all %}
-    {% if i.parent == None %}
-    {{i.commentUser}}<br>
-    {{i.dateCreation}}<br>
-    {{i.text}}<br>
-    {{i.parent}}<br>
-    {% else %}
-            {{i.commentUser}}
-            {{i.comcom.dateCreation}}
-            {{i.comcom.text}}
-    {% endif %}
+        <td><p>{{i.commentUser}}</p></td>
+        <td><p>{{i.dateCreation}}</p></td>
+        <td><p>{{i.text}}</p></td>
+    </tr>
     {% if request.user == post.author %}
     <a href="{% url 'comment-delete' i.id %}" class="btn btn-danger">Удалить</a>
     <a href="{% url 'comment-response' i.id %}" class="btn btn-info">Ответить</a>
@@ -41,10 +35,13 @@ Posts
     {% endfor %}
 
 
+
     <form action="" id="add_form" method="post">
         {% csrf_token %}
 
         {{ form.as_p }}
+        {{ text }}
+        {{ parent }}
 
     {% if request.user.is_authenticated %}
         <button class="btn btn-success" form="add_form" type="submit" value="Save">Добавить комментарий</button>

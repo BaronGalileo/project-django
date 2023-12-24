@@ -69,7 +69,7 @@ class Comment(models.Model):
     dateCreation = models.DateTimeField(auto_now_add=True)
     rating = models.SmallIntegerField(default=0)
     parent = models.ForeignKey(
-        'self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True, related_name='comcom')
+        'self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True,)
 
     def __str__(self):
         return self.text

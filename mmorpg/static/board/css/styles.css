@@ -107,3 +107,6 @@ main .list-pages .page-num-selected:hover {
 	box-shadow: none;
 
 }
+main .img {
+    width: 300px;
+    float: center;

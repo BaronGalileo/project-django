@@ -16,5 +16,6 @@ urlpatterns = [
     path('comment/<int:pk>', CommentDelete.as_view(), name="comment-delete"),
     path('comment/<int:pk>/response', CommentResponse.as_view(), name="comment-response"),
     path('comments/', CommentList.as_view(), name="comments"),
-    path('comments/<int:pk>', CommentList.as_view(), name="comment"),
+    path('comments/<int:pk>', CommentDetail.as_view(), name="comment"),
+    path('correspondence/<int:pk>', CorrespondencetList.as_view(), name="corresp"),
 ]

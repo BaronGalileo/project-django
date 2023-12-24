@@ -1,55 +1,56 @@
 {% extends 'board/default.html' %}
-
+{% load static %}
 {% block title %}
 Comments
 {% endblock title %}
 
 {% block content %}
 <div class="features">
-    <h1> Всего публикаций : {{comments|length}}</h1>
-    <h3> Сегодня : {{ time_now|date:'M d Y H:i:s' }} </h3>
-    <h3> {{ fresh_news|default:" на стрим!" }} </h3>
-
-
-    <hr>
-    {% if comments %}
     <table>
+        <img src="{% static 'board/img/dialog.png' %}"  alt="Диалог">
+           <tr>
 
+               <td> <h3>Объявление</h3> </td>
+               <td> <h3>Комментарий</h3> </td>
+               <td> <h3>Ответ от </h3> </td>
+               <td> <h3>Текст</h3> </td>
+           </tr>
 
         {% for p in comments %}
+        {% if request.user == p.commentUser or request.user == p.commentUser.author or p.commentUser.author == p.commentUser %}
 
 
-        <td>
-         {% if p.commentPost is not None %}
-            <p><a href="{{ p.commentPost.get_absolute_url }}"><li>{{ p }}</li></a></p>
+            <tr>
+            {% if p.commentPost is not None %}
 
-         {% else %}
-             <td><p>{{ p }}</p></td>
-         {% endif %}
-         {% if p.parent is not None%}
+               <td><p><a href="{% url 'post' p.commentPost.id %}"><li>{{ p }}</li></a></p></td>
+
+            {% else %}
+
+                <td><p><a href="{% url 'corresp' p.id %}"><li>{{ p }}</li></a></p></td>
+
+            {% endif %}
+               <td><p>{{ p }}</p></td>
 
 
 
-            <td><a href="{% url 'comment' p.pk %}"></a><p>{{ p.text }}</p></td>
 
-        {% else %}
-             <td><p>{{ p.text }}</p></td>
+                {% for i in comments %}
+                    {% if i.parent == p %}
+                        <td><p>{{ i.commentUser }}</p></td>
+                        <td><p><a href="{% url 'corresp' i.id %}"><li>{{ i }}</li></a></p></td>
+                    {% endif %}
+                {% endfor %}
+
         {% endif %}
-             <td><p>{{ p.parent}}</p></td>
+            </tr>
 
-        {% if request.user == p.parent %}
-            <td><p><a href="{% url 'post' p.pk %}"><li>{{ p }}</li></a></p></td>
-            <td><p>{{ p.text}}</p></td>
-            <td><p>{{ p.parent}}</p></td>
-
-        {% endif %}
-        </tr>
         {% endfor %}
 
-    </table>
-    {% else %}
-    <h2> "Комментариев нет!" </h2>
-    {% endif %}
+       </table>
+
+
+
 
 </div>
 {% endblock content %}

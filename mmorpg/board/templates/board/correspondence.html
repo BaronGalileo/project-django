@@ -1,0 +1,52 @@
+{% extends 'board/default.html' %}
+{% load static %}
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+
+<div class="features">
+
+        <img src="{% static 'board/img/dialog.png' %}"  alt="Диалог">
+
+    <h4>Сегодня : {{ time_now|date:'d M Y' }}</h4>
+
+    <hr>
+
+
+
+
+
+    <h3>Комментарии</h3>
+    {% for i in comment.all %}
+        {% if i.commentUser == request.user or i.parent.commentUser == request.user %}
+    <tr>
+        <td><p>{{i.commentUser}}</p></td>
+        <td><p>{{i.text}}</p></td>
+        <td><p>{{i.parent.commentUser}}</p></td>
+        <td><p>{{i.parent}}</p></td>
+
+    </tr>
+
+    <a href="{% url 'comment-response' i.id %}" class="btn btn-info">Ответить</a>
+
+
+    {% endif %}
+    {% endfor %}
+
+
+    <form action="" id="add_form" method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+
+
+        <button class="btn btn-success" form="add_form" type="submit" value="Save">Добавить комментарий</button>
+
+    </form>
+
+
+</div>
+{% endblock content %}

@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from datetime import datetime
 
@@ -83,7 +84,6 @@ class CategoryList(ListView):
     paginate_by = 3
 
 
-
 class PostDetail(FormMixin, DetailView):
     model = Post
     template_name = 'board/post.html'
@@ -99,6 +99,12 @@ class PostDetail(FormMixin, DetailView):
             form.save()
             return redirect('post', pk=self.get_object().id)
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['fresh_news'] = "Сегодня в 16.00 стрим от Gringo!"
+        context['time_now'] = datetime.now()
+        return context
+
 
 class CommentDelete(DeleteView):
     model = Comment
@@ -113,17 +119,16 @@ class CommentResponse(FormMixin, DetailView):
     template_name = 'board/comment-response.html'
     form_class = CommentForm
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, pk, *args, **kwargs):
         form = self.get_form()
+        parent = Comment.objects.get(id=pk)
         if form.is_valid():
             form = form.save(commit=False)
-            if request.POST.get('parent', None):
-                form.parent_id =int(request.POST.get('parent'))
+            form.parent = parent
             form.commentUser = request.user
             form.save()
 
             return redirect('/messages')
-
 
 
 class PostUpdateDetail(UpdateView):
@@ -146,7 +151,6 @@ class PostDeleteDetail(DeleteView):
 
 
 class CommentList(ListView):
-
     model = Comment
     template_name = 'board/comments.html'
     context_object_name = 'comments'
@@ -154,15 +158,32 @@ class CommentList(ListView):
 
 
 class CommentDetail(DetailView):
-    model = Post
-    template_name = 'board/post.html'
-    context_object_name = 'post'
+    model = Comment
+    template_name = 'board/correspondence.html'
+    context_object_name = 'comment'
     form_class = CommentForm
 
-    # def post(self, request, *args, **kwargs):
-    #     if form.is_valid():
-    #         form = form.save(commit=False)
-    #         form.commentPost = self.get_object()
-    #         form.commentUser = request.user
-    #         form.save()
-    #         return redirect('post', pk=self.get_object().id)
+class CorrespondencetList(FormMixin, ListView):
+    model = Comment
+    template_name = 'board/correspondence.html'
+    context_object_name = 'comment'
+    paginate_by = 10
+    form_class = CommentForm
+
+    def post(self, request, pk, *args, **kwargs):
+        form = self.get_form()
+        parent = Comment.objects.get(id=pk)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.parent = parent
+            form.commentUser = request.user
+            form.save()
+
+            return redirect('/corresp')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['fresh_news'] = "Сегодня в 16.00 стрим от Gringo!"
+        context['time_now'] = datetime.now()
+        return context
+

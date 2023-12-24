@@ -28,13 +28,27 @@ class CommentForm(forms.ModelForm):
 
     class Meta:
         model = Comment
-        fields = ('text', 'parent')
+        fields = ('text',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
+
+class ComForm(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = ('commentPost', 'commentUser', 'text',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            if self.fields[field] == self.fields['parent']:
+                print('parent')
+            else:
+                self.fields[field].widget.attrs['class'] = 'form-control'
 
 
 
