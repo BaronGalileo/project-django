@@ -7,7 +7,6 @@ from .views import *
 
 urlpatterns = [
     path('', PostList.as_view(), name="home"),
-    path('cat/', CategoryList.as_view(), name='category'),
     path('messages/', MyPostList.as_view(), name="messages"),
     path('create/', views.create, name="create"),
     path('post/<int:pk>/', PostDetail.as_view(), name="post"),
@@ -18,4 +17,5 @@ urlpatterns = [
     path('comments/', CommentList.as_view(), name="comments"),
     path('comments/<int:pk>', CommentDetail.as_view(), name="comment"),
     path('correspondence/<int:pk>', CorrespondencetList.as_view(), name="corresp"),
+    path('category/<int:category_id>/', select_category, name='category'),
 ]

@@ -24,8 +24,10 @@ Posts
     <tr>
         <td><p>{{i.commentUser}}</p></td>
         <td><p>{{i.text}}</p></td>
+        {% if i.parent is not None %}
         <td><p>{{i.parent.commentUser}}</p></td>
         <td><p>{{i.parent}}</p></td>
+        {% endif %}
 
     </tr>
 

@@ -1,14 +1,11 @@
-
-
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 from django_ckeditor_5.fields import CKEditor5Field
 
 
-
-
 class Post(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE,)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, )
 
     EVERYONE = "EN"
     TANKS = "TT"
@@ -39,22 +36,17 @@ class Post(models.Model):
     title = models.CharField(max_length=50, unique=True)
     content = CKEditor5Field(verbose_name='Сообщение')
     date_app = models.DateTimeField('Дата публикации', auto_now_add=True)
-    category = models.ManyToManyField("Category")
-    rating = models.SmallIntegerField(default=0)
+    category = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts', verbose_name="Категории")
 
-    def like(self):
-        self.rating += 1
-        self.save()
-
-    def dislike(self):
-        self.rating -= 1
-        self.save()
 
     def __str__(self):
         return self.title
 
+
     def get_absolute_url(self):
         return f'/post/{self.id}'
+
+
 
     class Meta:
         ordering = ['-date_app']
@@ -63,51 +55,35 @@ class Post(models.Model):
 class Comment(models.Model):
     commentPost = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='Комментарий', blank=True, null=True,
                                     related_name='commets')
-    commentUser = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Комментатор" )
+    commentUser = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Комментатор")
 
     text = models.TextField(verbose_name='Текст')
     dateCreation = models.DateTimeField(auto_now_add=True)
-    rating = models.SmallIntegerField(default=0)
     parent = models.ForeignKey(
-        'self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True,)
+        'self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True, )
 
     def __str__(self):
         return self.text
-
 
     class Meta:
         ordering = ['-dateCreation']
 
 
-
-
-    def like(self):
-        self.rating += 1
-        self.save()
-
-    def dislike(self):
-        self.rating -= 1
-        self.save()
-
-
 class Category(models.Model):
     name = models.CharField(max_length=64, unique=True, verbose_name='Название категории')
+    slug = models.SlugField(max_length=255, unique=True, db_index=True)
+
+
+
+
 
     def __str__(self):
-        return self.name.title()
+        return self.name
+
+
+    def get_absolute_url(self):
+        return reverse('category', kwargs={'category_id': self.pk})
+
 
     class Meta:
         ordering = ['id']
-
-
-class Subscriber(models.Model):
-    user = models.ForeignKey(
-        to=User,
-        on_delete=models.CASCADE,
-        related_name='subscriptions',
-    )
-    category = models.ForeignKey(
-        to='Category',
-        on_delete=models.CASCADE,
-        related_name='subscriptions',
-    )

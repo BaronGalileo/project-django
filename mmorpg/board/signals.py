@@ -1,9 +1,9 @@
+from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
-from board.models import Comment
+from board.models import Comment, Post
 
 
 @receiver(post_save, sender=Comment)
@@ -28,3 +28,18 @@ def comment_save_user(instance, sender, **kwargs):
         email.send()
 
 
+@receiver(post_save, sender=Post)
+def save_news(instance, sender, **kwargs):
+    post = sender.objects.get(id=instance.id)
+    print(post.category)
+    if post.category.id == 4:
+        print(post.category)
+        pipls = User.objects.all()
+        message = f'Опубликована новость {post}!'
+        for i in pipls:
+            email = EmailMessage('Новость опубликована',
+                             message,
+                             to=[i.email], )
+
+            email.send()
+    print(post.category.id)

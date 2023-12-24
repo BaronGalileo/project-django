@@ -1,25 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from datetime import datetime
 
 from django.views.generic.edit import FormMixin
 
 from .forms import PostForm, CommentForm
-from .models import Post, Category, Comment
-
-
-def index(request):
-    return render(request, 'board/index.html')
-
-
-def cat(request):
-    return render(request, 'board/cat.html')
-
-
-def message(request):
-    return render(request, 'board/message.html')
+from .models import Post, Comment, Category
 
 
 class MyPostList(ListView):
@@ -69,19 +56,15 @@ class PostList(ListView):
     context_object_name = 'posts'
     ordering = ['-date_app']
     paginate_by = 3
+    cat_selected = 0
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['fresh_news'] = "Сегодня в 16.00 стрим от Gringo!"
         context['time_now'] = datetime.now()
+        context['cat_selected'] = 0
         return context
 
-
-class CategoryList(ListView):
-    model = Category
-    template_name = 'board/category.html'
-    context_object_name = 'cat'
-    paginate_by = 3
 
 
 class PostDetail(FormMixin, DetailView):
@@ -154,7 +137,6 @@ class CommentList(ListView):
     model = Comment
     template_name = 'board/comments.html'
     context_object_name = 'comments'
-    paginate_by = 10
 
 
 class CommentDetail(DetailView):
@@ -162,6 +144,7 @@ class CommentDetail(DetailView):
     template_name = 'board/correspondence.html'
     context_object_name = 'comment'
     form_class = CommentForm
+
 
 class CorrespondencetList(FormMixin, ListView):
     model = Comment
@@ -187,3 +170,12 @@ class CorrespondencetList(FormMixin, ListView):
         context['time_now'] = datetime.now()
         return context
 
+def select_category(request,category_id):
+    posts = Post.objects.filter(category_id=category_id)
+
+    context = {
+        'posts': posts,
+        'category_selected': category_id
+    }
+
+    return render(request, 'board/posts.html', context=context)
