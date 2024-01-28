@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Создание объявления{% endblock %}
+
+{% block content %}
+<h1>{{ room }}</h1>
+{{ request.user }}
+{{ chat.messages }}
+{% for i in chat.messages.all %}
+        <td><p>{{i.content}}</p></td>
+        <td><p>{{i.date}}</p></td>
+        <td><p>{{i.author}}</p></td>
+    </tr>
+
+    <a href="{% url 'room' i.room_from.id %}" class="btn btn-danger">Удалить</a>
+    <a href="{% url 'room' i.room_from.id %}" class="btn btn-info">Ответить</a>
+
+
+    {% endfor %}
+
+
+<form method="post" id="add_form">
+        {% csrf_token %}
+
+            {{ form.content }}<br>
+
+
+        <button type="submit" form="add_form" >Отправить сообщение.</button>
+    </form>
+
+{% endblock %}

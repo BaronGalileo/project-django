@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Главная страница
+{% endblock title %}
+
+{% block content %}
+            {% if request.user.is_authenticated %}
+                <h1>Комнаты</h1>
+    <p>Некоторое колличество комнат</p>
+{% for r in rooms %}
+           <tr>
+               <td><p><a href="{% url 'room' r.id %}"><li>{{ r }}</li></a></p></td>
+               <td><p>{{ r.type }}</p></td>
+
+           </tr>
+{% endfor %}
+
+                {% else %}
+
+              <h1>Регестрируйся и  общайся!</h1>
+            <p>Найди новых друзей!</p>
+
+            {% endif %}
+{% endblock content %}
