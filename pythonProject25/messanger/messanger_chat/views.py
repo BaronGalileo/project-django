@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import DetailView, ListView, FormView
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, CreateView, UpdateView
 
 from .forms import *
 from .models import UserPage, Room
@@ -18,11 +19,14 @@ def index(request):
 
 
 
-class RoomList(ListView):
-    model = Room
+class ProfileList(ListView):
+    """Домашняя"""
+    model = UserPage
     template_name = 'rooms.html'
-    context_object_name = 'rooms'
+    context_object_name = 'profile'
 
+    # def get_queryset(self):
+    #     return super().get_queryset().filter(room.userpage=self.request.user)
 
 class RegisterView(FormView):
     form_class = RegisterForm
@@ -35,6 +39,8 @@ class RegisterView(FormView):
 
 
 class RoomDetail(FormMixin, DetailView):
+    """Сообщения в комнате"""
+
     model = Room
     form_class = AddMessages
     template_name = 'room.html'
@@ -43,8 +49,10 @@ class RoomDetail(FormMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
 
+
         form = self.get_form()
         if form.is_valid():
+            print(self.get_object())
             form = form.save(commit=False)
             form.author = request.user
             form.room_from = self.get_object()
@@ -53,19 +61,22 @@ class RoomDetail(FormMixin, DetailView):
 
 
 @login_required
-def create(request):
+def create(request, name):
     error = ''
     if request.method == 'POST':
         form = AddRoom(request.POST)
+        print('Вот.....')
+
         if form.is_valid():
             form = form.save(commit=False)
-            # form.author = request.user
+            form.author = request.user
             form.save()
 
-            return redirect('home')
+            return redirect('/')
 
 
         else:
+
             error = 'Форма была неверной'
 
     form = AddRoom()
@@ -78,7 +89,39 @@ def create(request):
 
 
 
+class AccauntDetail(UpdateView):
+    model = UserPage
+    template_name = 'profile.html'
+    context_object_name = 'profile'
+    form_class = UpdateUserPage
+    success_url = '/'
+
+
+class AccauntCreate(CreateView):
+    model = UserPage
+    template_name = 'addprofile.html'
+    context_object_name = 'profile'
+    form_class = AddUserPage
+    success_url = '/'
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.user_profile = request.user
+            form.save()
+            return redirect('home')
 
 
 
-
+# class AddMessage(View):
+#     """Сообщения"""
+#
+#     def post(self,request, pk):
+#         form = AddMessages(request.POST)
+#         if form.is_valid():
+#             form = form.save(commit=False)
+#             form.room_from_id = pk
+#             form.author = request.user
+#             form.save()
+#         return redirect('room', pk=pk)

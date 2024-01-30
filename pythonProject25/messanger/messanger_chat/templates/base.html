@@ -19,16 +19,24 @@
         <h3>Навигация</h3>
         <ul>
             {{ request.user }}
-            <a href="{% url 'test' %}"><li><i class="fas fa-home"></i>Главная</li></a>
-
-            <a href="{% url 'test' %}"><li><i class="fa-solid fa-list"></i>Создать комноту</li></a>
+            {{  profile.user_profile }}
+            {% if request.user.is_authenticated %}
+            {% if request.user.profile.get.id %}
+            <a href="{% url 'profile' request.user.profile.get.id  %}"><li><i class="fas fa-home"></i>Редактировать аккаунт</li></a>
+            {% else %}
+            <a href="{% url 'addprofile'  %}"><li><i class="fas fa-home"></i>Создать аккаунт</li></a>
+            {% endif %}
+            <a href="{% url 'add_room' %}"><li><i class="fa-solid fa-list"></i>Создать комноту</li></a>
             <a href="{% url 'test' %}"><li><i class="fa-solid fa-message"></i></i>Найти комноту</li></a>
             <a href=""><li><i class="fa-regular fa-image"></i>Сообщения</li></a>
+            {% endif %}
 
 
 
             {% if request.user.is_authenticated %}
+            {% if request.user.profile.get.id %}
                 <a href="{% url 'add_room' %}"><li><button class="btn btn-info"><i class="fas fa-plus-circle"></i>Добавить комноту</button></li></a>
+            {% endif %}
                 <a href="{% url 'logout' %}?next=/"><li><button class="btn btn-warning">Выйти</button></li></a>
 
                 {% else %}

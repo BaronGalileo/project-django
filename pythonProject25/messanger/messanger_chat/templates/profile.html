@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Создание объявления{% endblock %}
+{% block title %}Профиль{% endblock %}
 
 {% block content %}
 <div class="features">
-<h1>{{ room }}</h1>
-{{ request.user }}
-{{ chat.messages }}
+<h1>{{ profile }}</h1>
+    {% if profile.foto %}
+    <img src="{{ profile.foto.url }}" class="prof">
+    {% endif %}
+
+{{ profile }}
 {% for i in chat.messages.all %}
         <td><p>{{i.content}}</p></td>
         <td><p>{{i.date}}</p></td>
@@ -20,11 +23,10 @@
     {% endfor %}
 
 
-<form method="post" id="add_form">
+<form method="post" id="add_form" enctype="multipart/form-data">
         {% csrf_token %}
 
-            {{ form.name }}<br>
-            {{ form.type }}<br>
+            {{ form.as_p}}<br>
 
 
         <button type="submit" form="add_form" >Отправить сообщение.</button>

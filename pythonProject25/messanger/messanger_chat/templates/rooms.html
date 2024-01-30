@@ -5,15 +5,34 @@
 {% endblock title %}
 
 {% block content %}
+<div class="features">
             {% if request.user.is_authenticated %}
-                <h1>Комнаты</h1>
+                <h1>Комнаты{{profile.name}}</h1>
+    <p></p>
+
+
     <p>Некоторое колличество комнат</p>
-{% for r in rooms %}
+{% for r in profile %}
+{% if r.user_profile == request.user %}
+    {% if r.foto %}
+    <img src="{{ r.foto.url }}" class="prof">
+    {% endif %}
+    <h2>Вот{{ r.user_profile }}</h2>
+
+         {% if r.rooms %}
+
+
+
+    {% for i in r.rooms.values %}
            <tr>
-               <td><p><a href="{% url 'room' r.id %}"><li>{{ r }}</li></a></p></td>
-               <td><p>{{ r.type }}</p></td>
+               <p>Проверка{{i.id}}</p>
+
+               <td><p><a href="{% url 'room' i.id %}"><li>{{ i.name }}</li></a></p></td>
 
            </tr>
+        {% endfor %}
+        {% endif %}
+{% endif %}
 {% endfor %}
 
                 {% else %}
@@ -22,4 +41,5 @@
             <p>Найди новых друзей!</p>
 
             {% endif %}
+</div>
 {% endblock content %}

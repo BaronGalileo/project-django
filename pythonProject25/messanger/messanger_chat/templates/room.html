@@ -3,17 +3,20 @@
 {% block title %}Создание объявления{% endblock %}
 
 {% block content %}
-<h1>{{ room }}</h1>
-{{ request.user }}
-{{ chat.messages }}
-{% for i in chat.messages.all %}
+<div class="features">
+<h1>{{ chat.name }}</h1>
+
+{% for i in chat.messages.values %}
         <td><p>{{i.content}}</p></td>
         <td><p>{{i.date}}</p></td>
         <td><p>{{i.author}}</p></td>
+    {% if i.report %}
+    <td><p>{{i.report}}</p></td>
+    {% endif %}
     </tr>
-
-    <a href="{% url 'room' i.room_from.id %}" class="btn btn-danger">Удалить</a>
-    <a href="{% url 'room' i.room_from.id %}" class="btn btn-info">Ответить</a>
+<h2>Проверка{{i.author.author}}{{chat}}</h2>
+    <a href="{% url 'room' chat.id %}" class="btn btn-danger">Удалить</a>
+    <a href="#add_form" onclick="addReport(`{{i.content}}, {{i.id}}`)" class="btn btn-info">Ответить</a>
 
 
     {% endfor %}
@@ -21,11 +24,20 @@
 
 <form method="post" id="add_form">
         {% csrf_token %}
+        <input type="hidden" id="report" name="report">
 
             {{ form.content }}<br>
 
 
         <button type="submit" form="add_form" >Отправить сообщение.</button>
-    </form>
+    <hr>
+</form>
 
+</div>
+<script>
+function addReport(author,id){
+document.getElmentById('report').value = id;
+document.getElmentById('cont').innerText = `${author},`
+}
+</script>
 {% endblock %}
