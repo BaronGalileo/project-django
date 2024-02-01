@@ -11,6 +11,7 @@ urlpatterns = [
     path('room/<int:pk>', RoomDetail.as_view(), name='room'),
     path('register', RegisterView.as_view(), name="register"),
     path('addroom', views.create, name='add_room'),
+    path('getroom', views.selectRoom, name='get_room'),
     path('profile/<int:pk>', AccauntDetail.as_view(), name='profile'),
     path('addprofile', AccauntCreate.as_view(), name='addprofile'),
 

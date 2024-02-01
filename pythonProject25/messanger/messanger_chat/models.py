@@ -33,18 +33,18 @@ class UserPage(models.Model):
     user_profile = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     foto = models.ImageField(upload_to="img/%Y/%m/%d/", null=True, blank=True)
     name = models.CharField(max_length=64)
-    rooms = models.ManyToManyField(Room, blank=True)
+    rooms = models.ManyToManyField(Room, blank=True, related_name='users')
 
 
     def __str__(self):
-        return f'{self.user_profile}'
+        return f'{self.name}'
 
 
 
 
 class Message(models.Model):
 
-    author = models.ForeignKey(UserPage, on_delete=models.CASCADE,related_name='author')
+    author = models.ForeignKey(UserPage, on_delete=models.CASCADE, related_name='author')
     content = models.TextField(verbose_name='Текст')
     date = models.DateTimeField(auto_now_add=True)
     room_from = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name='Комната', blank=True, null=True,

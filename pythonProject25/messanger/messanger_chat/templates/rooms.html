@@ -17,7 +17,6 @@
     {% if r.foto %}
     <img src="{{ r.foto.url }}" class="prof">
     {% endif %}
-    <h2>Вот{{ r.user_profile }}</h2>
 
          {% if r.rooms %}
 
@@ -25,7 +24,6 @@
 
     {% for i in r.rooms.values %}
            <tr>
-               <p>Проверка{{i.id}}</p>
 
                <td><p><a href="{% url 'room' i.id %}"><li>{{ i.name }}</li></a></p></td>
 

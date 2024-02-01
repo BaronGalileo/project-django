@@ -14,11 +14,12 @@ class RegisterForm(UserCreationForm):
 class AddMessages(forms.ModelForm):
     class Meta:
         model = Message
-        fields = ['content', ]
+        fields = ['content',]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['content'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Сообщение', 'id': 'cont'})
+
 
 
 class AddRoom(forms.ModelForm):
@@ -33,6 +34,18 @@ class AddRoom(forms.ModelForm):
         fields = ('name', 'type',)
 
 
+class GetRoom(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Название'})
+
+
+    class Meta:
+        model = Room
+        fields = ('name',)
+
+
 class AddUserPage(forms.ModelForm):
     class Meta:
         model = UserPage
@@ -43,3 +56,5 @@ class UpdateUserPage(forms.ModelForm):
     class Meta:
         model = UserPage
         fields = ('foto', 'name',)
+
+

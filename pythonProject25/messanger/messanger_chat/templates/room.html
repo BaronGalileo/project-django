@@ -4,29 +4,47 @@
 
 {% block content %}
 <div class="features">
-<h1>{{ chat.name }}</h1>
+<h1>{{ chat }}</h1>
+
 
 {% for i in chat.messages.values %}
+    {% for name in profiles.values %}
+
+    {% if name.user_profile_id == i.author_id%}
+
+        <img src="{{ name.foto.url }}" class="prof">
+        <td><p>{{name.name}}</p></td>
         <td><p>{{i.content}}</p></td>
         <td><p>{{i.date}}</p></td>
-        <td><p>{{i.author}}</p></td>
-    {% if i.report %}
-    <td><p>{{i.report}}</p></td>
-    {% endif %}
+    <hr>
+        <td><p>{{i.report}}</p></td>
+
+<!--    {% if i.report %}-->
+<!--    <td><p>{{i.report}}</p></td>-->
+<!--    {% endif %}-->
     </tr>
-<h2>Проверка{{i.author.author}}{{chat}}</h2>
+<!--    {% for n in i %}-->
+<!--    <h2>Проверка{{i.type}}</h2>-->
+<!--        <td><p>{{n}}</p></td>-->
+<!--        <td><p>{{n.author}}</p></td>-->
+<!--        <td><p>{{n.date}}</p></td>-->
+<!--    {% endfor %}-->
+
+
     <a href="{% url 'room' chat.id %}" class="btn btn-danger">Удалить</a>
-    <a href="#add_form" onclick="addReport(`{{i.content}}, {{i.id}}`)" class="btn btn-info">Ответить</a>
+    <a href="#add_form" onclick="addReport(`{{name.name}}`, `{{i.id}}`)" class="btn btn-info">Ответить</a>
 
-
+    {% endif %}
+    {% endfor %}
     {% endfor %}
 
 
 <form method="post" id="add_form">
         {% csrf_token %}
-        <input type="hidden" id="report" name="report">
+        <input type="hidden" id="report_id" name="report">
 
             {{ form.content }}<br>
+            {{ form.author }}<br>
 
 
         <button type="submit" form="add_form" >Отправить сообщение.</button>
@@ -35,9 +53,11 @@
 
 </div>
 <script>
-function addReport(author,id){
-document.getElmentById('report').value = id;
-document.getElmentById('cont').innerText = `${author},`
+function addReport(autor, id){
+console.log(autor,id);
+document.getElementById('report_id').value = id;
+document.getElementById('cont').innerText = `${autor},`;
+console.log(name.name);
 }
 </script>
 {% endblock %}

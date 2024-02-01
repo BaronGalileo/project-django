@@ -38,6 +38,12 @@ class RegisterView(FormView):
         return super().form_valid(form)
 
 
+
+
+
+
+
+
 class RoomDetail(FormMixin, DetailView):
     """Сообщения в комнате"""
 
@@ -46,33 +52,44 @@ class RoomDetail(FormMixin, DetailView):
     template_name = 'room.html'
     context_object_name = 'chat'
 
+    def get_context_data(self, **kwargs):
+        context = super(RoomDetail, self).get_context_data(**kwargs)
+        context['profiles'] = UserPage.objects.all()
+        context['user_name'] = Message.objects.values('author')
+        return context
+
 
     def post(self, request, *args, **kwargs):
 
 
+
         form = self.get_form()
         if form.is_valid():
-            print(self.get_object())
             form = form.save(commit=False)
-            form.author = request.user
+            form.author_id = request.user.id
             form.room_from = self.get_object()
+            if request.POST.get('report', None):
+                form.report_id = int(request.POST.get('report'))
             form.save()
             return redirect('room', pk=self.get_object().id)
 
 
 @login_required
-def create(request, name):
+def create(request):
     error = ''
+    user = UserPage.objects.get(user_profile_id=request.user.id)
     if request.method == 'POST':
         form = AddRoom(request.POST)
-        print('Вот.....')
-
+        print(request.POST)
+        print(request)
         if form.is_valid():
             form = form.save(commit=False)
-            form.author = request.user
             form.save()
+            user.rooms.add(form)
+            user.save()
 
-            return redirect('/')
+
+            return redirect('room', pk=user.rooms.get(name=form).id)
 
 
         else:
@@ -86,6 +103,71 @@ def create(request, name):
         'error': error
     }
     return render(request, 'add_room.html', data)
+
+
+@login_required
+def selectRoom(request):
+    error = ''
+    user = UserPage.objects.get(user_profile_id=request.user.id)
+
+
+    if request.method == 'POST':
+        form = GetRoom(request.POST)
+        room = Room.objects.all()
+        room_select = room.get(name=request.POST.get('name'))
+        users_rooms = user.rooms
+        # print(room_select.id)
+        print(users_rooms.all())
+        print(room_select.type)
+        if room_select:
+            if 'pv' == room_select.type:
+                print('Да')
+
+            else:
+                print('нет')
+
+            # if room_select.type == 'pv':
+            #     print('Тип ПВ')
+            # else:
+
+
+
+
+
+        # for i in rooms.values():
+        #     print(i)
+        #     if i == room_select:
+        #         print('ОНО!!!!!')
+
+        # if room_select in rooms:
+        #     print("LFFFFFFFFFFFFFFFFF")
+        #     form.save()
+        #     user.rooms.add(form)
+        #     user.save()
+
+
+
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.save()
+            user.rooms.add(form)
+            user.save()
+
+
+            return redirect('room', pk=user.rooms.get(name=form).id)
+
+
+        else:
+
+            error = 'Форма была неверной'
+
+    form = AddRoom()
+
+    data = {
+        'form': form,
+        'error': error
+    }
+    return render(request, 'get_room.html', data)
 
 
 
