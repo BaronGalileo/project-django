@@ -4,20 +4,9 @@
 
 {% block content %}
 <div class="features">
-<h1>{{ room }}</h1>
-{{ request.user }}
-{{ chat.messages }}
-{% for i in chat.messages.all %}
-        <td><p>{{i.content}}</p></td>
-        <td><p>{{i.date}}</p></td>
-        <td><p>{{i.author}}</p></td>
-    </tr>
-
-    <a href="{% url 'room' i.room_from.id %}" class="btn btn-danger">Удалить</a>
-    <a href="{% url 'room' i.room_from.id %}" class="btn btn-info">Ответить</a>
+<h1>Создание комнаты</h1>
 
 
-    {% endfor %}
 
 
 <form method="post" id="add_form">
@@ -27,7 +16,7 @@
             {{ form.type }}<br>
 
 
-        <button type="submit" form="add_form" >Отправить сообщение.</button>
+        <button type="submit" form="add_form" class="btn btn-warning">Отправить сообщение.</button>
     </form>
 </div>
 {% endblock %}

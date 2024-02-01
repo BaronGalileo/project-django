@@ -9,7 +9,6 @@
     <img src="{{ profile.foto.url }}" class="prof">
     {% endif %}
 
-{{ profile }}
 {% for i in chat.messages.all %}
         <td><p>{{i.content}}</p></td>
         <td><p>{{i.date}}</p></td>
@@ -29,7 +28,7 @@
             {{ form.as_p}}<br>
 
 
-        <button type="submit" form="add_form" >Отправить сообщение.</button>
+        <button type="submit" form="add_form" class="btn btn-warning">Редактировать</button>
     </form>
 </div>
 {% endblock %}

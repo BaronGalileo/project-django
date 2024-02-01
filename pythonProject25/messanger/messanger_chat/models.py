@@ -15,8 +15,13 @@ class Room(models.Model):
         (PRIVATE, 'Приватная бесседа'),
     )
 
-    type = models.CharField(max_length=3, choices=ROOM_TYPE, default=PRIVATE)
+    type = models.CharField(max_length=3, choices=ROOM_TYPE, default=PUBLIC)
     name = models.CharField(max_length=64, unique=True)
+    # privat = models.BooleanField(default=False)
+
+
+
+
 
 
     class Meta:
@@ -30,7 +35,7 @@ class Room(models.Model):
 
 
 class UserPage(models.Model):
-    user_profile = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user_profile = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='profile')
     foto = models.ImageField(upload_to="img/%Y/%m/%d/", null=True, blank=True)
     name = models.CharField(max_length=64)
     rooms = models.ManyToManyField(Room, blank=True, related_name='users')
@@ -54,3 +59,5 @@ class Message(models.Model):
 
     def __str__(self):
         return self.content
+
+

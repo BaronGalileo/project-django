@@ -13,10 +13,8 @@ from .models import UserPage, Room
 
 @login_required
 def index(request):
-
     content = {}
     return render(request, 'index.html', content)
-
 
 
 class ProfileList(ListView):
@@ -28,6 +26,7 @@ class ProfileList(ListView):
     # def get_queryset(self):
     #     return super().get_queryset().filter(room.userpage=self.request.user)
 
+
 class RegisterView(FormView):
     form_class = RegisterForm
     template_name = 'registration/register.html'
@@ -36,12 +35,6 @@ class RegisterView(FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
-
-
-
-
-
-
 
 
 class RoomDetail(FormMixin, DetailView):
@@ -58,10 +51,7 @@ class RoomDetail(FormMixin, DetailView):
         context['user_name'] = Message.objects.values('author')
         return context
 
-
     def post(self, request, *args, **kwargs):
-
-
 
         form = self.get_form()
         if form.is_valid():
@@ -80,14 +70,11 @@ def create(request):
     user = UserPage.objects.get(user_profile_id=request.user.id)
     if request.method == 'POST':
         form = AddRoom(request.POST)
-        print(request.POST)
-        print(request)
         if form.is_valid():
             form = form.save(commit=False)
             form.save()
             user.rooms.add(form)
             user.save()
-
 
             return redirect('room', pk=user.rooms.get(name=form).id)
 
@@ -110,65 +97,44 @@ def selectRoom(request):
     error = ''
     user = UserPage.objects.get(user_profile_id=request.user.id)
 
-
     if request.method == 'POST':
         form = GetRoom(request.POST)
         room = Room.objects.all()
-        room_select = room.get(name=request.POST.get('name'))
-        users_rooms = user.rooms
-        # print(room_select.id)
-        print(users_rooms.all())
-        print(room_select.type)
-        if room_select:
-            if 'pv' == room_select.type:
-                print('Да')
+        name_room = request.POST.get('name')
+
+        if Room.objects.filter(name__iexact=name_room):
+            room_select = room.get(name=request.POST.get('name'))
+            users_rooms = UserPage.objects.filter(rooms__name=room_select)
+            if 'pv' == room_select.type and len(users_rooms) < 2:
+                user.rooms.add(room_select)
+                user.save()
+                return redirect('room', pk=user.rooms.get(name=room_select).id)
+
+            elif 'pub' == room_select.type:
+                user.rooms.add(room_select)
+                user.save()
+                return redirect('room', pk=user.rooms.get(name=room_select).id)
+
+
 
             else:
-                print('нет')
-
-            # if room_select.type == 'pv':
-            #     print('Тип ПВ')
-            # else:
+                return redirect('add_room')
 
 
 
-
-
-        # for i in rooms.values():
-        #     print(i)
-        #     if i == room_select:
-        #         print('ОНО!!!!!')
-
-        # if room_select in rooms:
-        #     print("LFFFFFFFFFFFFFFFFF")
-        #     form.save()
-        #     user.rooms.add(form)
-        #     user.save()
-
-
-
-        if form.is_valid():
-            form = form.save(commit=False)
-            form.save()
-            user.rooms.add(form)
-            user.save()
-
-
-            return redirect('room', pk=user.rooms.get(name=form).id)
 
 
         else:
 
             error = 'Форма была неверной'
 
-    form = AddRoom()
+    form = GetRoom()
 
     data = {
         'form': form,
         'error': error
     }
     return render(request, 'get_room.html', data)
-
 
 
 class AccauntDetail(UpdateView):
@@ -193,8 +159,6 @@ class AccauntCreate(CreateView):
             form.user_profile = request.user
             form.save()
             return redirect('home')
-
-
 
 # class AddMessage(View):
 #     """Сообщения"""
