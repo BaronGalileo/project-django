@@ -4,9 +4,14 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DetailView, ListView, FormView
 from django.views.generic.edit import FormMixin, CreateView, UpdateView
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .forms import *
 from .models import UserPage, Room
+from .serializers import *
 
 
 # Create your views here.
@@ -160,14 +165,23 @@ class AccauntCreate(CreateView):
             form.save()
             return redirect('home')
 
-# class AddMessage(View):
-#     """Сообщения"""
-#
-#     def post(self,request, pk):
-#         form = AddMessages(request.POST)
-#         if form.is_valid():
-#             form = form.save(commit=False)
-#             form.room_from_id = pk
-#             form.author = request.user
-#             form.save()
-#         return redirect('room', pk=pk)
+class RoomAPIList(generics.ListCreateAPIView):
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
+
+class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+class ProfileAPIList(generics.ListCreateAPIView):
+    queryset = UserPage.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = UserPage.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+

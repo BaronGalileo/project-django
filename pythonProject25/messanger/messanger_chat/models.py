@@ -17,7 +17,7 @@ class Room(models.Model):
 
     type = models.CharField(max_length=3, choices=ROOM_TYPE, default=PUBLIC)
     name = models.CharField(max_length=64, unique=True)
-    # privat = models.BooleanField(default=False)
+
 
 
 

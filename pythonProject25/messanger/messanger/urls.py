@@ -16,9 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from messanger_chat.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('messanger_chat.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('api/v1/RoomList/', RoomAPIList.as_view()),
+    path('api/v1/RoomList/<int:pk>', RoomDetailView.as_view(), name='room_api'),
+    path('api/v1/ProfileList/', ProfileAPIList.as_view()),
+    path('api/v1/ProfileList/<int:pk>', ProfileDetailView.as_view(), name='profile_api')
+
 ]
