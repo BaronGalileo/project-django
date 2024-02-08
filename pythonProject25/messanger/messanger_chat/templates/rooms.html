@@ -7,7 +7,10 @@
 {% block content %}
 <div class="features">
             {% if request.user.is_authenticated %}
-                <h1>Комнаты{{profile.name}}</h1>
+                <h1>Пользователи</h1>
+            {% for name in profile %}
+            {{ name }}
+            {% endfor %}
     <p></p>
 
 
@@ -17,12 +20,12 @@
     {% if r.foto %}
     <img src="{{ r.foto.url }}" class="prof">
     {% endif %}
+{{r.current_rooms.all}}
+         {% if r.current_rooms %}
 
-         {% if r.rooms %}
 
 
-
-    {% for i in r.rooms.values %}
+    {% for i in r.current_rooms.values %}
            <tr>
 
                <td><p><a href="{% url 'room' i.id %}"><li>{{ i.name }}</li></a></p></td>

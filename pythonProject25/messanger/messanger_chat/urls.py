@@ -7,13 +7,13 @@ from .views import *
 
 urlpatterns = [
     path('', ProfileList.as_view(), name='home'),
-    path('test/', views.index, name='test'),
-    path('room/<int:pk>', RoomDetail.as_view(), name='room'),
+    path('test/', views.test, name='test'),
     path('register', RegisterView.as_view(), name="register"),
     path('addroom', views.create, name='add_room'),
-    path('getroom', views.selectRoom, name='get_room'),
     path('profile/<int:pk>', AccauntDetail.as_view(), name='profile'),
     path('addprofile', AccauntCreate.as_view(), name='addprofile'),
+    path('room/<int:pk>', views.room, name='room'),
+
 
 
 ]

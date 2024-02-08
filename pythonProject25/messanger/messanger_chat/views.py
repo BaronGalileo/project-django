@@ -1,25 +1,23 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic import DetailView, ListView, FormView
-from django.views.generic.edit import FormMixin, CreateView, UpdateView
+from django.views.generic import  ListView, FormView
+from django.views.generic.edit import  CreateView, UpdateView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.response import Response
-from rest_framework.views import APIView
+
 
 from .forms import *
-from .models import UserPage, Room
 from .serializers import *
 
 
 # Create your views here.
 
 @login_required
-def index(request):
+def test(request):
     content = {}
-    return render(request, 'index.html', content)
+    return render(request, 'test.html', content)
 
 
 class ProfileList(ListView):
@@ -27,9 +25,6 @@ class ProfileList(ListView):
     model = UserPage
     template_name = 'rooms.html'
     context_object_name = 'profile'
-
-    # def get_queryset(self):
-    #     return super().get_queryset().filter(room.userpage=self.request.user)
 
 
 class RegisterView(FormView):
@@ -42,50 +37,26 @@ class RegisterView(FormView):
         return super().form_valid(form)
 
 
-class RoomDetail(FormMixin, DetailView):
-    """Сообщения в комнате"""
-
-    model = Room
-    form_class = AddMessages
-    template_name = 'room.html'
-    context_object_name = 'chat'
-
-    def get_context_data(self, **kwargs):
-        context = super(RoomDetail, self).get_context_data(**kwargs)
-        context['profiles'] = UserPage.objects.all()
-        context['user_name'] = Message.objects.values('author')
-        return context
-
-    def post(self, request, *args, **kwargs):
-
-        form = self.get_form()
-        if form.is_valid():
-            form = form.save(commit=False)
-            form.author_id = request.user.id
-            form.room_from = self.get_object()
-            if request.POST.get('report', None):
-                form.report_id = int(request.POST.get('report'))
-            form.save()
-            return redirect('room', pk=self.get_object().id)
-
 
 @login_required
 def create(request):
     error = ''
-    user = UserPage.objects.get(user_profile_id=request.user.id)
+    name = request.POST.get("name", None)
     if request.method == 'POST':
         form = AddRoom(request.POST)
+
         if form.is_valid():
             form = form.save(commit=False)
+            form.host = request.user
             form.save()
-            user.rooms.add(form)
-            user.save()
 
-            return redirect('room', pk=user.rooms.get(name=form).id)
+            return HttpResponseRedirect(reverse("room", kwargs={"pk": Room.objects.get(name=name).pk}))
 
+        elif Room.objects.get(name=name):
+            return HttpResponseRedirect(reverse("room", kwargs={"pk": Room.objects.get(name=name).pk}))
 
         else:
-
+            print(name)
             error = 'Форма была неверной'
 
     form = AddRoom()
@@ -94,59 +65,15 @@ def create(request):
         'form': form,
         'error': error
     }
+    print(error)
     return render(request, 'add_room.html', data)
-
-
-@login_required
-def selectRoom(request):
-    error = ''
-    user = UserPage.objects.get(user_profile_id=request.user.id)
-
-    if request.method == 'POST':
-        form = GetRoom(request.POST)
-        room = Room.objects.all()
-        name_room = request.POST.get('name')
-
-        if Room.objects.filter(name__iexact=name_room):
-            room_select = room.get(name=request.POST.get('name'))
-            users_rooms = UserPage.objects.filter(rooms__name=room_select)
-            if 'pv' == room_select.type and len(users_rooms) < 2:
-                user.rooms.add(room_select)
-                user.save()
-                return redirect('room', pk=user.rooms.get(name=room_select).id)
-
-            elif 'pub' == room_select.type:
-                user.rooms.add(room_select)
-                user.save()
-                return redirect('room', pk=user.rooms.get(name=room_select).id)
-
-
-
-            else:
-                return redirect('add_room')
-
-
-
-
-
-        else:
-
-            error = 'Форма была неверной'
-
-    form = GetRoom()
-
-    data = {
-        'form': form,
-        'error': error
-    }
-    return render(request, 'get_room.html', data)
 
 
 class AccauntDetail(UpdateView):
     model = UserPage
     template_name = 'profile.html'
     context_object_name = 'profile'
-    form_class = UpdateUserPage
+    form_class = AddUserPage
     success_url = '/'
 
 
@@ -165,14 +92,20 @@ class AccauntCreate(CreateView):
             form.save()
             return redirect('home')
 
+
+"""----api----"""
+
+
 class RoomAPIList(generics.ListCreateAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
+
 
 class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+
 
 class ProfileAPIList(generics.ListCreateAPIView):
     queryset = UserPage.objects.all()
@@ -185,3 +118,19 @@ class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProfileSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+
+
+
+def room(request, pk):
+
+
+    room: Room = get_object_or_404(Room, pk=pk)
+    chat = room.messages
+    profiles = UserPage.objects.all()
+    data = {
+        "room": room,
+        'chat': chat,
+        'user': profiles
+    }
+    print(data)
+    return render(request, 'room_api.html', data)

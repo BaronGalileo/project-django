@@ -16,10 +16,11 @@
    <aside>
         <img src="{% static 'img/dialog.png' %}"  alt="Мессенжер">
         <span class="logo">Мессенджер</span>
-        <h3>Навигация{{ request.user.profile }}</h3>
+        <h3>Навигация</h3>
         <ul>
-            {{ request.user }}
-            {{  profile.user_profile }}
+            {{ request.user.profile }}
+
+
             {% if request.user.is_authenticated %}
             {% if request.user.profile %}
             <a href="{% url 'profile' request.user.id  %}"><li><i class="fas fa-home"></i>Редактировать аккаунт</li></a>
@@ -27,7 +28,7 @@
             <a href="{% url 'addprofile'  %}"><li><i class="fas fa-home"></i>Создать аккаунт</li></a>
             {% endif %}
             <a href="{% url 'add_room' %}"><li><i class="fa-solid fa-list"></i>Создать комноту</li></a>
-            <a href="{% url 'get_room' %}"><li><i class="fa-solid fa-message"></i></i>Найти комноту</li></a>
+            <a href="{% url 'add_room' %}"><li><i class="fa-solid fa-message"></i></i>Найти комноту</li></a>
             <a href="{% url 'home' %}"><li><i class="fa-regular fa-image"></i>Домашняя</li></a>
             {% endif %}
 

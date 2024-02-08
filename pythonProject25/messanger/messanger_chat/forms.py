@@ -27,23 +27,14 @@ class AddRoom(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Название'})
-        self.fields['type'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Название'})
 
-    class Meta:
-        model = Room
-        fields = ('name', 'type',)
-
-
-class GetRoom(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['name'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Название'})
 
 
     class Meta:
         model = Room
         fields = ('name',)
+
+
 
 
 class AddUserPage(forms.ModelForm):
@@ -52,9 +43,5 @@ class AddUserPage(forms.ModelForm):
         fields = ('foto', 'name',)
 
 
-class UpdateUserPage(forms.ModelForm):
-    class Meta:
-        model = UserPage
-        fields = ('foto', 'name',)
 
 

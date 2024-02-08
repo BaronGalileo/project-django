@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Chat Rooms</title>
+</head>
+<body>
+{% block content %}
+<div class="features">
+<h4>Hi -  <span id="username"></span></h4>
+    <hb></hb>
+
+    <div class="box">
+        <a href="#chat-message-input"  class="btn btn-info">Ответить</a>
+        <div><strong>Чат:</strong></div>
+            <img class="pot">
+
+        <div class="log"></div>
+
+    </div>
+
+<!--{% for name in profile %}-->
+
+<!--<p>{{ name }}</p>-->
+<!--            {% endfor %}-->
+
+<!--    {% for i in chat.all %}-->
+
+<!--        <td><p>{{i.author}}</p></td>-->
+<!--        <td><p>{{i.content}}</p></td>-->
+<!--        <td><p>{{i.date}}</p></td>-->
+<!--        <a href="#chat-message-input" onclick="addReport(`{{i.author}}`)" class="btn btn-info">Ответить</a>-->
+<!--    {% endfor %}-->
+
+
+
+    <textarea id="chat-message-input" placeholder="Сообщение" ></textarea>
+<input id="chat-message-submit" type="button"  onclick="document.location.reload()"  value="Отправить">
+
+<script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous"></script>
+<script>
+    const textarea = document.querySelector('textarea');
+
+<!--setInterval(function(){-->
+<!--   window.location.reload(1);-->
+<!--}, 5000);-->
+
+// Вешаем слушатель события ввода
+textarea.addEventListener('input', ()=> {
+  // обнуляем высоту, чтобы поле уменьшалось, если содержимое уменьшается
+  textarea.style.height = ``
+
+  // Устанавливаем высоту равной высоте поля со скроллом.
+  // При этом прибавляем к ней размер бордера снизу + сверху.
+  // Тоесть если бордер размером 1px, значит добавляем 2px.
+  textarea.style.height = `${textarea.scrollHeight + 2}px`
+})
+    const logElem = document.querySelector(".log");
+    const poto = document.querySelector(".log");
+    const room_pk = "{{ room.pk }}";
+    const request_id = new Date().getTime()
+    const token = ''
+    console.log(room_pk)
+    console.log(request_id)
+    console.log("request", '{{request}}')
+    const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/?token=${localStorage.getItem('Token')}`);
+
+
+    chatSocket.onopen = function () {
+        chatSocket.send(
+            JSON.stringify({
+                pk: room_pk,
+                action: "join_room",
+                request_id: request_id,
+            })
+        );
+        chatSocket.send(
+            JSON.stringify({
+                pk: room_pk,
+                action: "retrieve",
+                request_id: request_id,
+            })
+        );
+        chatSocket.send(
+            JSON.stringify({
+                pk: room_pk,
+                action: "subscribe_to_messages_in_room",
+                request_id: request_id,
+            })
+        );
+        chatSocket.send(
+            JSON.stringify({
+                pk: room_pk,
+                action: "subscribe_instance",
+                request_id: request_id,
+            })
+        );
+    };
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        switch (data.action) {
+            case "retrieve":
+                console.log(data.data)
+                document.getElementById('username').innerText = data.data.host.username
+                for (let mess of data.data.messages) {
+                    logElem.innerHTML += `<img src='${mess.author.foto}'>` + `${mess.author.name}` + " : " + `${mess.content}`  + `${mess.date_formatted}` + "<br/>" + "<hb>" ;
+
+
+                    console.log(mess.author);
+                    console.log(mess.content);
+                    console.log(mess.date_formatted);
+
+                }
+
+                //setRoom(old =>data.data);
+                //setMessages(old=>data.messages);
+                break;
+            case "create":
+                console.log(data.action, data.data)
+                //setMessages(old=>[...old, data])
+                break;
+            default:
+                break;
+        }
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    $('#chat-message-input').focus();
+    $('#chat-message-input').on('keyup', function (e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    });
+    $('#chat-message-submit').on('click', function (e) {
+        const message = $('#chat-message-input').val();
+        chatSocket.send(JSON.stringify({
+            message: message,
+            action: "create_message",
+            request_id: request_id,
+        }));
+        $('#chat-message-input').val('');
+    });
+    function addReport(autor){
+    console.log(autor)
+    document.getElementById('chat-message-input').innerText = `${autor},`;
+}
+
+</script>
+    </div>
+{% endblock %}
+</body>
+
+</html>

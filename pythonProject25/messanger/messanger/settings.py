@@ -77,6 +77,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'messanger.wsgi.application'
+
 ASGI_APPLICATION = 'messanger.asgi.application'
 
 CHANNEL_LAYERS = {
@@ -153,6 +154,8 @@ LOGIN_REDIRECT_URL = reverse_lazy("home")
 
 SITE_ID = 1
 
+REST_FRAMEWORK = {}
+DJANGO_CHANNELS_REST_API = {}
 
 
 
